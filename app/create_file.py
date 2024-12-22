@@ -1,7 +1,6 @@
 import os
 import sys
 from datetime import datetime
-from typing import LiteralString
 
 
 def create_file_from_terminal() -> None:
@@ -17,8 +16,12 @@ def create_file_from_terminal() -> None:
                     break
                 path_list.append(command_list[next_index])
 
-        if command_list[index] == "-f":
-            file_name = command_list[index + 1]
+        try:
+            if command_list[index] == "-f":
+                file_name = command_list[index + 1]
+        except IndexError:
+            print("File name should be written after '-f'")
+            return
 
     if len(path_list) > 0:
         path = os.path.join(*path_list)
@@ -29,7 +32,7 @@ def create_file_from_terminal() -> None:
         write_in_file(path, file_name)
 
 
-def create_directory(path: str | LiteralString | bytes) -> None:
+def create_directory(path: str) -> None:
     if len(path):
         try:
             os.makedirs(path)
@@ -37,9 +40,13 @@ def create_directory(path: str | LiteralString | bytes) -> None:
             return
 
 
-def write_in_file(path: str | LiteralString | bytes, file_name: str) -> None:
+def write_in_file(path: str, file_name: str) -> None:
     if len(path):
-        modified_file = open(f"{path}/{file_name}", "a")
+        try:
+            modified_file = open(f"{path}/{file_name}", "a")
+        except IOError:
+            print(f"Path {path}/ does not exists")
+            return
     else:
         modified_file = open(file_name, "a")
 
